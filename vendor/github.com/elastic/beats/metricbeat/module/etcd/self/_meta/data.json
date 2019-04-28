@@ -1,0 +1,46 @@
+{
+    "@timestamp": "2017-10-12T08:05:34.853Z",
+    "agent": {
+        "hostname": "host.example.com",
+        "name": "host.example.com"
+    },
+    "etcd": {
+        "self": {
+            "id": "8e9e05c52164694d",
+            "leaderinfo": {
+                "leader": "8e9e05c52164694d",
+                "starttime": "2019-02-18T21:42:23.191073075Z",
+                "uptime": "23m12.747903053s"
+            },
+            "name": "default",
+            "recv": {
+                "appendrequest": {
+                    "count": 0
+                },
+                "bandwidthrate": 0,
+                "pkgrate": 0
+            },
+            "send": {
+                "appendrequest": {
+                    "count": 0
+                },
+                "bandwidthrate": 0,
+                "pkgrate": 0
+            },
+            "starttime": "2019-02-18T21:42:21.490011868Z",
+            "state": "StateLeader"
+        }
+    },
+    "event": {
+        "dataset": "etcd.self",
+        "duration": 115000,
+        "module": "etcd"
+    },
+    "metricset": {
+        "name": "self"
+    },
+    "service": {
+        "address": "127.0.0.1:2379",
+        "type": "etcd"
+    }
+}
