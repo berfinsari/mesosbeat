@@ -4,7 +4,15 @@
 
 mesosbeat:
   # Defines how often an event is sent to the output
-  period: 1s
+  period: 30
+
+  # Defines the http port serviced
+  # Default to 5050
+  port: 5050
+
+  # Defines the http host serviced
+  # Default to localhost
+  host: localhost
 
 #================================ General ======================================
 

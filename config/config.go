@@ -3,12 +3,12 @@
 
 package config
 
-import "time"
-
-type Config struct {
-	Period time.Duration `config:"period"`
+type MesosbeatConfig struct {
+	Period *int64
+	Port   *string
+	Host   *string
 }
 
-var DefaultConfig = Config{
-	Period: 1 * time.Second,
+type ConfigSettings struct {
+	Mesosbeat MesosbeatConfig
 }
