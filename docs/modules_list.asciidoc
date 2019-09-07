@@ -1,0 +1,14 @@
+////
+This file is generated! See scripts/mage/docs_collector.go
+////
+
+[options="header"]
+|===
+|Modules   |Dashboards   |Metricsets   
+|<<mesosbeat-module-mesos,mesos>>  experimental[]   |image:./images/icon-yes.png[Prebuilt dashboards are available]    |  
+.1+| .1+|  |<<mesosbeat-metricset-mesos-master,master>> experimental[]  
+|===
+
+--
+
+include::modules/mesos.asciidoc[]

@@ -158,6 +158,36 @@ function process(evt) {
 	assert.Equal(t, "1:15+Ly6HsDg0sJdTmNktf6rko+os=", id)
 }
 
+func TestNewCopyFields(t *testing.T) {
+	const script = `
+var processor = require('processor');
+
+var copy = new processor.CopyFields({
+    fields: [
+        {from: "message", to: "log.original"},
+    ],
+});
+
+function process(evt) {
+	copy.Run(evt);
+}
+`
+
+	logp.TestingSetup()
+	p, err := javascript.NewFromConfig(javascript.Config{Source: script}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	evt, err := p.Run(testEvent())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = evt.GetValue("log.original")
+	assert.NoError(t, err)
+}
+
 func TestNewProcessorDecodeJSONFields(t *testing.T) {
 	const script = `
 var processor = require('processor');
@@ -239,7 +269,7 @@ var dns = new processor.DNS({
 function process(evt) {
 	dns.Run(evt);
     if (evt.Get().tags[0] !== "_dns_reverse_lookup_failed") {
-        throw "missing tag"
+        throw "missing tag";
     }
 }
 `
@@ -254,4 +284,112 @@ function process(evt) {
 	if err != nil {
 		t.Fatal(err)
 	}
+}
+
+func TestNewRename(t *testing.T) {
+	const script = `
+var processor = require('processor');
+
+var rename = new processor.Rename({
+    fields: [
+        {from: "message", to: "log.original"},
+    ],
+});
+
+function process(evt) {
+	rename.Run(evt);
+}
+`
+
+	logp.TestingSetup()
+	p, err := javascript.NewFromConfig(javascript.Config{Source: script}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	evt, err := p.Run(testEvent())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = evt.GetValue("log.original")
+	assert.NoError(t, err)
+}
+
+func TestNewTruncateFields(t *testing.T) {
+	const script = `
+var processor = require('processor');
+
+var truncate = new processor.TruncateFields({
+    fields: [
+        "message",
+    ],
+    max_characters: 4,
+});
+
+function process(evt) {
+	truncate.Run(evt);
+}
+`
+
+	logp.TestingSetup()
+	p, err := javascript.NewFromConfig(javascript.Config{Source: script}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	evt, err := p.Run(testEvent())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	msg, _ := evt.GetValue("message")
+	assert.Equal(t, "key=", msg)
+}
+
+func TestNewProcessorChain(t *testing.T) {
+	const script = `
+var processor = require('processor');
+
+var localeProcessor = new processor.AddLocale();
+
+var chain = new processor.Chain()
+    .Add(localeProcessor)
+    .Rename({
+        fields: [
+            {from: "event.timezone", to: "timezone"},
+        ],
+    })
+    .Add(function(evt) {
+		evt.Put("hello", "world");
+    })
+    .Build();
+
+var chainOfChains = new processor.Chain()
+    .Add(chain)
+    .AddFields({fields: {foo: "bar"}})
+	.Build();
+
+function process(evt) {
+	chainOfChains.Run(evt);
+}
+`
+
+	logp.TestingSetup()
+	p, err := javascript.NewFromConfig(javascript.Config{Source: script}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	evt, err := p.Run(testEvent())
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = evt.GetValue("timezone")
+	assert.NoError(t, err)
+	v, _ := evt.GetValue("hello")
+	assert.Equal(t, "world", v)
+	v, _ = evt.GetValue("fields.foo")
+	assert.Equal(t, "bar", v)
 }

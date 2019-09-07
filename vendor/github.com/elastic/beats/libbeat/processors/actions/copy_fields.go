@@ -26,6 +26,7 @@ import (
 	"github.com/elastic/beats/libbeat/common"
 	"github.com/elastic/beats/libbeat/logp"
 	"github.com/elastic/beats/libbeat/processors"
+	"github.com/elastic/beats/libbeat/processors/checks"
 )
 
 type copyFields struct {
@@ -40,13 +41,14 @@ type copyFieldsConfig struct {
 
 func init() {
 	processors.RegisterPlugin("copy_fields",
-		configChecked(newCopyFields,
-			requireFields("fields"),
+		checks.ConfigChecked(NewCopyFields,
+			checks.RequireFields("fields"),
 		),
 	)
 }
 
-func newCopyFields(c *common.Config) (processors.Processor, error) {
+// NewCopyFields returns a new copy_fields processor.
+func NewCopyFields(c *common.Config) (processors.Processor, error) {
 	config := copyFieldsConfig{
 		IgnoreMissing: false,
 		FailOnError:   true,
@@ -70,12 +72,14 @@ func (f *copyFields) Run(event *beat.Event) (*beat.Event, error) {
 
 	for _, field := range f.config.Fields {
 		err := f.copyField(field.From, field.To, event.Fields)
-		if err != nil && f.config.FailOnError {
+		if err != nil {
 			errMsg := fmt.Errorf("Failed to copy fields in copy_fields processor: %s", err)
 			logp.Debug("copy_fields", errMsg.Error())
-			event.Fields = backup
-			event.PutValue("error.message", errMsg.Error())
-			return event, err
+			if f.config.FailOnError {
+				event.Fields = backup
+				event.PutValue("error.message", errMsg.Error())
+				return event, err
+			}
 		}
 	}
 

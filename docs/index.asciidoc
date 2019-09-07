@@ -1,5 +1,0 @@
-= Mesosbeat Docs
-
-Welcome to the Mesosbeat documentation.
-
-

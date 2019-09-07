@@ -6,7 +6,7 @@ TEST_ENVIRONMENT?=true
 ES_BEATS?=..
 
 # Metricbeat can only be cross-compiled on platforms not requiring CGO.
-GOX_OS=netbsd linux windows
+GOX_OS=linux windows
 GOX_FLAGS=-arch="amd64 386 arm ppc64 ppc64le"
 
 DOCS_BRANCH=$(shell grep doc-branch ../libbeat/docs/version.asciidoc | cut -c 14-)
@@ -22,11 +22,8 @@ kibana:
 
 # Collects all module docs
 .PHONY: collect-docs
-collect-docs: python-env
-	@rm -rf docs/modules
-	@mkdir -p docs/modules
-	@${PYTHON_ENV}/bin/python ${ES_BEATS}/metricbeat/scripts/docs_collector.py --beat ${BEAT_NAME}
-	mage FieldsDocs
+collect-docs:
+	mage CollectAll
 
 # Collects all module configs
 .PHONY: configs

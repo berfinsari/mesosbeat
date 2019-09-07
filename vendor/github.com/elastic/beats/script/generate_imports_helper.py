@@ -1,0 +1,1 @@
+/home/berf/work/src/github.com/berfinsari/mesosbeat/vendor/github.com/elastic/beats/metricbeat/scripts/generate_imports_helper.py
