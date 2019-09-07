@@ -1,6 +1,6 @@
 # Mesosbeat
 
-Mesosbeat is an [Elastic Beat](https://www.elastic.co/products/beats) that reads stats from the Etcd v2 API and indexes them into Elasticsearch or Logstash.
+Mesosbeat is an [Elastic Beat](https://www.elastic.co/products/beats) that reads stats from the Mesos and indexes them into Elasticsearch or Logstash.
 
 ## Description
 
